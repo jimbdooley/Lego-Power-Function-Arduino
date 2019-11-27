@@ -1,0 +1,106 @@
+/*
+
+*/
+int toggle = 0;
+int t[] = {toggle,0,0,0,0,0,0,1,0,0,1,0}; //start
+int p[] = {toggle,0,0,0,0,0,0,1,0,0,0,0}; //stop
+int a[16];
+int buttonTracker = 9;
+void setup() {
+    pinMode(12,OUTPUT);
+    pinMode(11,INPUT_PULLUP);
+    pinMode(10,OUTPUT);
+}
+
+void loop() {
+ 
+  /*
+  if(!digitalRead(11) & !buttonTracker){
+    buttonTracker = true;
+    if(toggle==0){
+      for(int i = 0; i<16; i++){
+        a[i] = p[i];
+      }
+    }
+    if(toggle==1){
+      for(int i = 0; i<16; i++){
+        a[i] = t[i];
+      }
+    toggle = 1-toggle;
+    }
+  }
+  if(digitalRead(11) & buttonTracker){
+    buttonTracker = false;
+  }
+  */
+  if(digitalRead(11)&&(buttonTracker!=0)){
+    digitalWrite(10,HIGH);
+    signalSwap(0);
+  }
+  if((!digitalRead(11))&&(buttonTracker!=1)){
+    digitalWrite(10,LOW);
+    signalSwap(1);
+  }
+  start();
+  for(int i = 0; i<16; i++){
+    if(a[i]==0){
+      low();
+    }
+    else{
+      high();
+    }
+  }
+  start();
+  delay(5);
+}
+
+void signalSwap(int swapper){
+  toggle=1-toggle;
+  a[0]=toggle;
+  if(swapper==0){  
+  for(int i =1; i<12; i++){
+      a[i]=p[i];
+      buttonTracker = 0;
+    }
+  }
+  if(swapper==1){  
+  for(int i =1; i<12; i++){
+      a[i]=t[i];
+      buttonTracker = 1;
+    }
+  }
+
+  for(int i = 0; i<4; i++){
+    a[12+i]=1^a[8+i]^a[4+i]^a[i];
+  }
+}
+
+void start(){
+  for(int i = 0; i<6; i++){
+     digitalWrite(12,HIGH);
+    delayMicroseconds(13);
+      digitalWrite(12,LOW);
+    delayMicroseconds(13);
+  }
+    delayMicroseconds(1026);
+}
+
+void high(){
+  for(int i = 0; i<6; i++){
+     digitalWrite(12,HIGH);
+    delayMicroseconds(13);
+      digitalWrite(12,LOW);
+    delayMicroseconds(13);
+  }
+    delayMicroseconds(552);
+}
+
+void low(){
+   for(int i = 0; i<6; i++){
+     digitalWrite(12,HIGH);
+    delayMicroseconds(13);
+      digitalWrite(12,LOW);
+    delayMicroseconds(13);
+  }
+    delayMicroseconds(263);
+}
